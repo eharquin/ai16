@@ -22,18 +22,17 @@ public class MessageReceptor extends Thread {
 
             while (true) {
                 m = (Message) in.readObject();
-                String content = (String) m.content;
                 switch (m.type) {
                     case LOGIN:
-                        System.out.println("\r" + content + "a rejoint la conversation\n--------------------------");
+                        System.out.println("\r" + m.username + " a rejoint la conversation\n--------------------------");
                         break;
 
                     case TEXT:
-                        System.out.println("\r" + content + "\n");
+                        System.out.println("\r" + m.username + " a dit : " + m.content + "\n");
                         break;
 
                     case LOGOUT:
-                        System.out.println("\r" + content + "a quitté la conversation\n--------------------------");
+                        System.out.println("\r" + m.username + " a quitté la conversation\n--------------------------");
                         break;
                 }
 

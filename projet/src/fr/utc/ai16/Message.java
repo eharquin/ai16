@@ -7,10 +7,12 @@ import java.io.Serializable;
 public class Message implements Serializable {
 
     public MessageType type;
+    public String username;
     public Object content;
 
-    public Message(MessageType type, Object content) {
+    public Message(MessageType type, String username, Object content) {
         this.type = type;
+        this.username = username;
         this.content = content;
     }
 

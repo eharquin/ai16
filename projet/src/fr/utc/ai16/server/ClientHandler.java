@@ -42,19 +42,19 @@ class ClientHandler extends Thread
     public void handleMessage(Message message) throws IOException {
         switch (message.type) {
             case LOGIN:
-                this.connection = new OpenConnection((String) message.content, this.outputStream);
+                this.connection = new OpenConnection((String) message.username, this.outputStream);
                 this.clients.add(this.connection);
-                this.sendToAll(new Message(MessageType.LOGIN, message.content));
+                this.sendToAll(new Message(MessageType.LOGIN, this.connection.username, null));
                 break;
             case TEXT:
-                this.sendToAll(new Message(MessageType.TEXT, message.content));
+                this.sendToAll(new Message(MessageType.TEXT, this.connection.username, message.content));
                 break;
             case LOGOUT:
                 this.inputStream.close();
                 this.outputStream.close();
                 this.socket.close();
                 this.clients.remove(this.connection);
-                this.sendToAll(new Message(MessageType.LOGOUT, message.content));
+                this.sendToAll(new Message(MessageType.LOGOUT, this.connection.username, null));
                 break;
         }
     }

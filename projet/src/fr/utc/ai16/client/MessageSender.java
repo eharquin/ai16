@@ -23,19 +23,19 @@ public class MessageSender extends Thread {
             ObjectOutputStream out = new ObjectOutputStream(client.getOutputStream());
             Scanner sc = new Scanner(System.in);
 
-            SendLoginInformation(out, sc);
+            String pseudo = SendLoginInformation(out, sc);
 
             boolean exit = true;
             //Read and send loop
             while (exit) {
                 Message m = null;
                 String text = sc.nextLine();
-                if (text == "quit") {
-                    m = new Message(MessageType.LOGOUT, null);
+                if (text.equals("quit")) {
+                    m = new Message(MessageType.LOGOUT, pseudo, null);
                     m.send(out);
                     exit = false;
                 } else {
-                    m = new Message(MessageType.TEXT, text);
+                    m = new Message(MessageType.TEXT, pseudo, text);
                     m.send(out);
                 }
             }
@@ -46,11 +46,12 @@ public class MessageSender extends Thread {
         }
     }
 
-    public void SendLoginInformation(ObjectOutputStream out, Scanner sc) throws IOException {
+    public String SendLoginInformation(ObjectOutputStream out, Scanner sc) throws IOException {
         System.out.println("Entrez votre pseudo:");
         String pseudo = sc.nextLine();
 
-        Message loginMessage = new Message(MessageType.LOGIN, pseudo);
+        Message loginMessage = new Message(MessageType.LOGIN, pseudo, null);
         loginMessage.send(out);
+        return pseudo;
     }
 }
