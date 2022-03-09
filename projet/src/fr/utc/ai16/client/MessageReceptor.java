@@ -1,48 +1,49 @@
 package fr.utc.ai16.client;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.lang.Thread;
+import java.net.Socket;
 import fr.utc.ai16.Message;
-import fr.utc.ai16.MessageType;
 
-public class MessageReceptor extends Thread{
+public class MessageReceptor extends Thread {
 
     private Socket client;
 
-    public MessageReceptor(Socket client){
+    public MessageReceptor(Socket client) {
         this.client = client;
     }
 
     @Override
-    public void run(){
-        try{
-            ObjectInputstream in =  new ObjectInputStream(client.getInputStream());
+    public void run() {
+        try {
+            ObjectInputStream in = new ObjectInputStream(client.getInputStream());
             Message m = null;
 
-            while(true){
-                m = (Message)in.readObject();
-                switch (m.type){
-                    String content = (String)m.content;
+            while (true) {
+                m = (Message) in.readObject();
+                String content = (String) m.content;
+                switch (m.type) {
                     case LOGIN:
-                        System.out.printl("\r" + content + "a rejoint la conversation\n--------------------------");
+                        System.out.println("\r" + content + "a rejoint la conversation\n--------------------------");
                         break;
 
                     case TEXT:
-                        System.out.printl("\r" + content + "\n");
+                        System.out.println("\r" + content + "\n");
                         break;
 
                     case LOGOUT:
-                        System.out.printl("\r" + content + "a quitté la conversation\n--------------------------");
+                        System.out.println("\r" + content + "a quitté la conversation\n--------------------------");
                         break;
                 }
 
             }
-        } catch(IOException e){
+        } catch (IOException e) {
             System.out.println(e.getMessage());
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
     }
-
-
-    
 
 
 }

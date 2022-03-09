@@ -6,11 +6,9 @@ import fr.utc.ai16.MessageType;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Date;
 
 class ClientHandler extends Thread
 {
-    String name;
     OpenConnection connection;
     final ArrayList<OpenConnection> clients;
     final ObjectInputStream inputStream;
@@ -44,14 +42,12 @@ class ClientHandler extends Thread
     public void handleMessage(Message message) throws IOException {
         switch (message.type) {
             case LOGIN:
-                this.name = (String) message.content;
-                this.connection = new OpenConnection((String) message.content, this.socket);
+                this.connection = new OpenConnection((String) message.content, this.outputStream);
                 this.clients.add(this.connection);
                 this.sendToAll(new Message(MessageType.LOGIN, message.content));
                 break;
             case TEXT:
                 this.sendToAll(new Message(MessageType.TEXT, message.content));
-                System.out.println("Client sent : " + message.content);
                 break;
             case LOGOUT:
                 this.inputStream.close();
@@ -66,7 +62,7 @@ class ClientHandler extends Thread
     public void sendToAll(Message message) throws IOException {
         for (int i = 0; i< this.clients.size(); i++){
             OpenConnection connection = this.clients.get(i);
-            ObjectOutputStream foreignOutputStream = new ObjectOutputStream(connection.socket.getOutputStream());
+            ObjectOutputStream foreignOutputStream = connection.getObjectOutputStream();
             (new Message(MessageType.TEXT, message.content)).send(foreignOutputStream);
         }
     }

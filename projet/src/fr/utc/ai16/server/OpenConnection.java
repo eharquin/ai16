@@ -5,26 +5,20 @@ import java.net.Socket;
 
 public class OpenConnection {
     String username;
-    Socket socket;
+    final OutputStream outputStream;
+    final ObjectOutputStream objectOutputStream;
 
-    public OpenConnection(String username, Socket socket) {
+    public OpenConnection(String username, OutputStream outputStream) throws IOException {
         this.username = username;
-        this.socket = socket;
+        this.outputStream = outputStream;
+        this.objectOutputStream = new ObjectOutputStream(this.outputStream);
     }
 
-    public InputStream inputStream () throws IOException {
-        return this.socket.getInputStream();
+    public OutputStream getOutputStream () throws IOException {
+        return this.outputStream;
     }
 
-    public ObjectInputStream objectInputStream () throws IOException {
-        return new ObjectInputStream(this.inputStream());
-    }
-
-    public OutputStream outputStream () throws IOException {
-        return this.socket.getOutputStream();
-    }
-
-    public ObjectOutputStream objectOutputStream () throws IOException {
-        return new ObjectOutputStream(this.outputStream());
+    public ObjectOutputStream getObjectOutputStream () throws IOException {
+        return this.objectOutputStream;
     }
 }
