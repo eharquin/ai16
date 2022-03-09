@@ -62,8 +62,8 @@ class ClientHandler extends Thread
     public void sendToAll(Message message) throws IOException {
         for (int i = 0; i< this.clients.size(); i++){
             OpenConnection connection = this.clients.get(i);
-            ObjectOutputStream foreignOutputStream = connection.getObjectOutputStream();
-            (new Message(MessageType.TEXT, message.content)).send(foreignOutputStream);
+            System.out.println("Sending message with content " + message.content + " to " + connection.username);
+            message.send(connection.getOutputStream());
         }
     }
 }

@@ -1,24 +1,17 @@
 package fr.utc.ai16.server;
 
 import java.io.*;
-import java.net.Socket;
 
 public class OpenConnection {
     String username;
-    final OutputStream outputStream;
-    final ObjectOutputStream objectOutputStream;
+    final ObjectOutputStream outputStream;
 
-    public OpenConnection(String username, OutputStream outputStream) throws IOException {
+    public OpenConnection(String username, ObjectOutputStream outputStream) throws IOException {
         this.username = username;
         this.outputStream = outputStream;
-        this.objectOutputStream = new ObjectOutputStream(this.outputStream);
     }
 
-    public OutputStream getOutputStream () throws IOException {
+    public ObjectOutputStream getOutputStream () throws IOException {
         return this.outputStream;
-    }
-
-    public ObjectOutputStream getObjectOutputStream () throws IOException {
-        return this.objectOutputStream;
     }
 }
