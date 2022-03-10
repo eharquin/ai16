@@ -44,8 +44,16 @@ class ClientHandler extends Thread
             case LOGIN:
                 this.connection = new OpenConnection((String) message.username, this.outputStream);
                 this.clients.add(this.connection);
-                this.sendToAll(new Message(MessageType.LOGIN, this.connection.username, null));
+                this.sendToAll(new Message(MessageType.LOGIN, this.connection.username, null,'*'));
                 break;
+
+            case TEXT_PRIVATE:
+                OpenConnection conn = GetClient();
+                if(conn != null) {
+                    Message.send(conn.outputStream);
+                }
+                break;
+
             case TEXT:
                 this.sendToAll(new Message(MessageType.TEXT, this.connection.username, message.content));
                 break;
@@ -66,4 +74,17 @@ class ClientHandler extends Thread
             message.send(connection.getOutputStream());
         }
     }
+
+    public OpenConnection GetClient(Message message){
+        OpenConnection connection;
+        for (int i = 0; i < this.clients.size(); i++) {
+            OpenConnection connection = this.clients.get(i);
+            if (message.destination == connection.username) {
+                return connection;
+            }
+            return null;
+        }
+    }
 }
+
+

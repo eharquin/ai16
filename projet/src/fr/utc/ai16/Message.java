@@ -9,11 +9,13 @@ public class Message implements Serializable {
     public MessageType type;
     public String username;
     public Object content;
+    public String destination;
 
-    public Message(MessageType type, String username, Object content) {
+    public Message(MessageType type, String username, Object content,String destination) {
         this.type = type;
         this.username = username;
         this.content = content;
+        this.destination = destination;
     }
 
     public void send(ObjectOutputStream stream) throws IOException {

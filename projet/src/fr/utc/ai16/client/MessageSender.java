@@ -31,11 +31,38 @@ public class MessageSender extends Thread {
                 Message m = null;
                 String text = sc.nextLine();
                 if (text.equals("quit")) {
-                    m = new Message(MessageType.LOGOUT, pseudo, null);
+                    m = new Message(MessageType.LOGOUT, pseudo, null ,"*");
                     m.send(out);
                     exit = false;
-                } else {
-                    m = new Message(MessageType.TEXT, pseudo, text);
+                }
+                else if (text.substring(0) == "#")
+                {
+                    int index = 0;
+                    for (int i = 1;i < text.length();i++)
+                    {
+                        if (text.substring(i) == " ")
+                        {
+                           index = i;
+                           break;
+                        }
+                    }
+                    String destinataire;
+                    if (index != 0)
+                    {
+                        destinataire = text.substring(1,index);
+                        m = new Message(MessageType.TEXT_PRIVATE,pseudo,text,destinataire);
+                    }
+                    else
+                    {
+                        //à voir comment gérer ce cas là
+                        //m = new Message(MessageType.TEXT_PRIVATE,pseudo,text,destinataire);
+                    }
+                    destinataire = text.substring(1,index);
+                    m = new Message(MessageType.TEXT_PRIVATE,pseudo,text,destinataire);
+                    m.send(out);
+                }
+                else {
+                    m = new Message(MessageType.TEXT, pseudo, text , "*");
                     m.send(out);
                 }
             }
@@ -50,7 +77,7 @@ public class MessageSender extends Thread {
         System.out.println("Entrez votre pseudo:");
         String pseudo = sc.nextLine();
 
-        Message loginMessage = new Message(MessageType.LOGIN, pseudo, null);
+        Message loginMessage = new Message(MessageType.LOGIN, pseudo, null ,"*");
         loginMessage.send(out);
         return pseudo;
     }
