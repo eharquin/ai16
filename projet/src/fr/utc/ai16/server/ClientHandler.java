@@ -16,6 +16,10 @@ class ClientHandler extends Thread
     final Socket socket;
 
 
+    public void usernameClient()
+    {
+
+    }
     // Constructor
     public ClientHandler(Socket socket, ArrayList<OpenConnection> clients, ObjectInputStream inputStream, ObjectOutputStream outputStream)
     {
@@ -44,25 +48,25 @@ class ClientHandler extends Thread
             case LOGIN:
                 this.connection = new OpenConnection((String) message.username, this.outputStream);
                 this.clients.add(this.connection);
-                this.sendToAll(new Message(MessageType.LOGIN, this.connection.username, null,'*'));
+                this.sendToAll(new Message(MessageType.LOGIN, this.connection.username, null,"*"));
                 break;
 
             case TEXT_PRIVATE:
-                OpenConnection conn = GetClient();
+                OpenConnection conn = GetClient(message);
                 if(conn != null) {
-                    Message.send(conn.outputStream);
+                    message.send(conn.outputStream);
                 }
                 break;
 
             case TEXT:
-                this.sendToAll(new Message(MessageType.TEXT, this.connection.username, message.content));
+                this.sendToAll(new Message(MessageType.TEXT, this.connection.username, message.content, "*"));
                 break;
             case LOGOUT:
                 this.inputStream.close();
                 this.outputStream.close();
                 this.socket.close();
                 this.clients.remove(this.connection);
-                this.sendToAll(new Message(MessageType.LOGOUT, this.connection.username, null));
+                this.sendToAll(new Message(MessageType.LOGOUT, this.connection.username, null, "*"));
                 break;
         }
     }
@@ -78,12 +82,12 @@ class ClientHandler extends Thread
     public OpenConnection GetClient(Message message){
         OpenConnection connection;
         for (int i = 0; i < this.clients.size(); i++) {
-            OpenConnection connection = this.clients.get(i);
-            if (message.destination == connection.username) {
+            connection = this.clients.get(i);
+            if (message.destination.equals(connection.username)) {
                 return connection;
             }
-            return null;
         }
+        return null;
     }
 }
 

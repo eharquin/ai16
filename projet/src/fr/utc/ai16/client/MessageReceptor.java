@@ -33,6 +33,7 @@ public class MessageReceptor extends Thread {
 
                     case TEXT_PRIVATE:
                         System.out.println("\r" + m.username + " vous a dit :" + m.content + "\n");
+                        break;
 
                     case LOGOUT:
                         System.out.println("\r" + m.username + " a quitté la conversation\n--------------------------");

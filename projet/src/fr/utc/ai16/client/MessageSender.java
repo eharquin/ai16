@@ -35,12 +35,12 @@ public class MessageSender extends Thread {
                     m.send(out);
                     exit = false;
                 }
-                else if (text.substring(0) == "#")
+                else if (text.substring(0,1).equals("#"))
                 {
                     int index = 0;
                     for (int i = 1;i < text.length();i++)
                     {
-                        if (text.substring(i) == " ")
+                        if (text.substring(i,i+1).equals("#"))
                         {
                            index = i;
                            break;
@@ -58,6 +58,7 @@ public class MessageSender extends Thread {
                         //m = new Message(MessageType.TEXT_PRIVATE,pseudo,text,destinataire);
                     }
                     destinataire = text.substring(1,index);
+                    text = text.substring(index+1,text.length());
                     m = new Message(MessageType.TEXT_PRIVATE,pseudo,text,destinataire);
                     m.send(out);
                 }
