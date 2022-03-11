@@ -5,4 +5,5 @@ public enum MessageType {
     TEXT,
     TEXT_PRIVATE,
     LOGOUT,
+    ERROR_CONNECTION,
 }

@@ -1,5 +1,6 @@
 package fr.utc.ai16.server;
 
+import com.sun.tools.javac.Main;
 import fr.utc.ai16.Message;
 import fr.utc.ai16.MessageType;
 
@@ -16,10 +17,6 @@ class ClientHandler extends Thread
     final Socket socket;
 
 
-    public void usernameClient()
-    {
-
-    }
     // Constructor
     public ClientHandler(Socket socket, ArrayList<OpenConnection> clients, ObjectInputStream inputStream, ObjectOutputStream outputStream)
     {
@@ -46,9 +43,18 @@ class ClientHandler extends Thread
     public void handleMessage(Message message) throws IOException {
         switch (message.type) {
             case LOGIN:
-                this.connection = new OpenConnection((String) message.username, this.outputStream);
-                this.clients.add(this.connection);
-                this.sendToAll(new Message(MessageType.LOGIN, this.connection.username, null,"*"));
+                if(uniqueUsername(message.username))
+                {
+                    this.connection = new OpenConnection((String) message.username, this.outputStream);
+                    this.clients.add(this.connection);
+                    this.sendToAll(new Message(MessageType.LOGIN, this.connection.username, null,"*"));
+                }
+                else
+                {
+                    Message errorMessage = new Message(MessageType.ERROR_CONNECTION, message.username, null, message.username );
+                    errorMessage.send(this.outputStream);
+                    socket.close();
+                }
                 break;
 
             case TEXT_PRIVATE:
@@ -77,6 +83,21 @@ class ClientHandler extends Thread
             System.out.println("Sending message with content " + message.content + " to " + connection.username);
             message.send(connection.getOutputStream());
         }
+    }
+
+    public boolean uniqueUsername(String username)
+    {
+        OpenConnection connection;
+        for(int i=0;i < this.clients.size();i++ )
+        {
+            connection = this.clients.get(i);
+            if (username.equals(connection.username))
+            {
+                return false;
+            }
+        }
+        System.out.println("on passe ici");
+        return true;
     }
 
     public OpenConnection GetClient(Message message){

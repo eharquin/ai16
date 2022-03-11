@@ -19,8 +19,9 @@ public class MessageReceptor extends Thread {
         try {
             ObjectInputStream in = new ObjectInputStream(client.getInputStream());
             Message m = null;
+            boolean exit = true;
 
-            while (true) {
+            while (exit) {
                 m = (Message) in.readObject();
                 switch (m.type) {
                     case LOGIN:
@@ -37,6 +38,10 @@ public class MessageReceptor extends Thread {
 
                     case LOGOUT:
                         System.out.println("\r" + m.username + " a quitté la conversation\n--------------------------");
+                        break;
+                    case ERROR_CONNECTION:
+                        exit = false;
+                        System.out.println("\r" + m.username + " déja utilisé\n--------------------------");
                         break;
                 }
 
