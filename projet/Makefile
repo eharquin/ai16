@@ -1,36 +1,40 @@
-JFLAGS_CLIENT = -sourcepath SRC_CLIENT -cp BLD_CLIENT -d BLD_CLIENT -implicit:none
-JFLAGS_MESSAGE = -sourcepath SRC_CLIENT -cp BLD_CLIENT -d BLD_CLIENT -implicit:none
+JFLAGS_CLIENT = -sourcepath src -cp build -d build -implicit:none
+JFLAGS_MESSAGE = -sourcepath src -cp build -d build -implicit:none
 
 
-SRC_CLIENT = src/fr/utc/ai16/client/
-BLD_CLIENT = build/fr/utc/ai16/client/
+BLD = build/fr/utc/ai16/
 
 SRC_MESSAGE = src/fr/utc/ai16/
-BLD_MESSAGE = build/fr/utc/ai16/
-
+SRC_CLIENT = src/fr/utc/ai16/client/
 
 JC = javac
 
+JV = java
+JVFLAGS = -cp build
+Main = fr.utc.ai16.client.Main
+
+RM = rm -Rf
+
 #CLIENT
-$(BLD_CLIENT)MessageReceptor.class: $(SRC_CLIENT)MessageReceptor.java $(BLD_CLIENT)Message.class $(BLD_CLIENT)MessageType.class 
-	$(JC) $(JFLAGS) $<
+$(BLD)Main.class: $(SRC_CLIENT)Main.java $(BLD)MessageSender.class $(BLD)MessageReceptor.class 
+	$(JC) $(JFLAGS_CLIENT) $<
 
-$(BLD_CLIENT)MessageSender.class: $(SRC_CLIENT)MessageSender.java $(BLD_CLIENT)Message.class $(BLD_CLIENT)MessageType.class  
-	$(JC) $(JFLAGS) $<
+$(BLD)MessageReceptor.class: $(SRC_CLIENT)MessageReceptor.java $(BLD)Message.class $(BLD)MessageType.class
+	$(JC) $(JFLAGS_CLIENT) $<
 
-$(BLD_CLIENT)Main.class: $(SRC_CLIENT)Main.java $(BLD_CLIENT)MessageReceptor.class $(BLD_CLIENT)MessageSender.class
-	$(JC) $(JFLAGS) $<
-
-$(BLD)Choix.class: $(SRC)Choix.java
-	$(JC) $(JFLAGS) $<
-
-
+$(BLD)MessageSender.class: $(SRC_CLIENT)MessageSender.java $(BLD)Message.class $(BLD)MessageType.class
+	$(JC) $(JFLAGS_CLIENT) $<
+	
 #MESSAGE
-$(BLD_CLIENT)MessageReceptor.class: $(SRC_CLIENT)MessageReceptor.java $(BLD_CLIENT)Message.class $(BLD_CLIENT)MessageType.class 
-	$(JC) $(JFLAGS) $<
+$(BLD)MessageType.class: $(SRC_MESSAGE)MessageType.java
+	$(JC) $(JFLAGS_MESSAGE) $<
 
-$(BLD_CLIENT)MessageSender.class: $(SRC_CLIENT)MessageSender.java $(BLD_CLIENT)Message.class $(BLD_CLIENT)MessageType.class  
-	$(JC) $(JFLAGS) $<
+$(BLD)Message.class: $(SRC_MESSAGE)Message.java $(BLD)MessageType.class
+	$(JC) $(JFLAGS_MESSAGE) $<
+
+run:
+	$(JV) $(JVFLAGS) $(Main)
+
 
 clean:
-	$(RM) $(BLD)*.class
+	$(RM) $(BLD)
