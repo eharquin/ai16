@@ -8,34 +8,39 @@ import java.util.ArrayList;
 
 public class Main {
     static ArrayList<OpenConnection> clients = new ArrayList<>();
+    static boolean exit = true;
 
     public static void main(String[] args) throws IOException
     {
-        ServerSocket serverSocket = new ServerSocket(18060);
-
-        while (true)
+        while(true)
         {
-            Socket socket = null;
-
-            try
+            ServerSocket serverSocket = new ServerSocket(18060);
+            while (true)
             {
-                socket = serverSocket.accept();
+                Socket socket = null;
 
-                System.out.println("A new client is connected : " + socket);
+                try
+                {
+                    socket = serverSocket.accept();
 
-                ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
-                ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
+                    System.out.println("A new client is connected : " + socket);
 
-                Thread t = new ClientHandler(socket, clients, inputStream, outputStream);
+                    ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
+                    ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
 
-                t.start();
+                    Thread t = new ClientHandler(socket, clients, inputStream, outputStream);
 
-            }
-            catch (Exception e){
-                socket.close();
-                e.printStackTrace();
+                    t.start();
+
+
+                }
+                catch (Exception e){
+                    socket.close();
+                    e.printStackTrace();
+                }
             }
         }
+
     }
 
 }

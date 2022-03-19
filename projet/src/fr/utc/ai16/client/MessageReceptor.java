@@ -10,9 +10,14 @@ public class MessageReceptor extends Thread {
 
     private Socket client;
 
-    public MessageReceptor(Socket client) {
+    private MessageSender sender;
+
+    public MessageReceptor(Socket client,MessageSender sender) {
+
+        this.sender = sender;
         this.client = client;
     }
+
 
     @Override
     public void run() {
@@ -42,6 +47,7 @@ public class MessageReceptor extends Thread {
                     case ERROR_CONNECTION:
                         exit = false;
                         System.out.println("\r" + m.username + " déja utilisé\n--------------------------");
+                        sender.setExit();
                         break;
                 }
 

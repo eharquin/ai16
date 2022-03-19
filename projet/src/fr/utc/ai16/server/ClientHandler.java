@@ -53,7 +53,9 @@ class ClientHandler extends Thread
                 {
                     Message errorMessage = new Message(MessageType.ERROR_CONNECTION, message.username, null, message.username );
                     errorMessage.send(this.outputStream);
-                    socket.close();
+                    this.inputStream.close();
+                    this.outputStream.close();
+                    this.socket.close();
                 }
                 break;
 

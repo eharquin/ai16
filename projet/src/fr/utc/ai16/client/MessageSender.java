@@ -10,13 +10,18 @@ import fr.utc.ai16.Message;
 import fr.utc.ai16.MessageType;
 
 public class MessageSender extends Thread {
-
+    private boolean exit = true;
     private Socket client;
-
+    private MessageSender sender;
     public MessageSender(Socket client) {
+
         this.client = client;
     }
 
+    public void setExit()
+    {
+        exit = false;
+    }
     @Override
     public void run() {
         try {
@@ -25,7 +30,9 @@ public class MessageSender extends Thread {
 
             String pseudo = SendLoginInformation(out, sc);
 
-            boolean exit = true;
+
+
+
             //Read and send loop
             while (exit) {
                 Message m = null;
@@ -51,16 +58,11 @@ public class MessageSender extends Thread {
                     {
                         destinataire = text.substring(1,index);
                         m = new Message(MessageType.TEXT_PRIVATE,pseudo,text,destinataire);
+                        destinataire = text.substring(1,index);
+                        text = text.substring(index+1,text.length());
+                        m = new Message(MessageType.TEXT_PRIVATE,pseudo,text,destinataire);
+                        m.send(out);
                     }
-                    else
-                    {
-                        //à voir comment gérer ce cas là
-                        //m = new Message(MessageType.TEXT_PRIVATE,pseudo,text,destinataire);
-                    }
-                    destinataire = text.substring(1,index);
-                    text = text.substring(index+1,text.length());
-                    m = new Message(MessageType.TEXT_PRIVATE,pseudo,text,destinataire);
-                    m.send(out);
                 }
                 else {
                     m = new Message(MessageType.TEXT, pseudo, text , "*");
