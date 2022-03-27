@@ -1,0 +1,7 @@
+Mar 27, 2022 10:21:09 PM ClientSocket main
+SEVERE: null
+java.net.SocketException: Broken pipe (Write failed)
+        at java.base/java.net.SocketOutputStream.socketWrite0(Native Method)
+        at java.base/java.net.SocketOutputStream.socketWrite(SocketOutputStream.java:110)
+        at java.base/java.net.SocketOutputStream.write(SocketOutputStream.java:138)
+        at ClientSocket.main(ClientSocket.java:36)
