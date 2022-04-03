@@ -5,7 +5,9 @@ import fr.utc.ai16.MessageType;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 class ClientHandler extends Thread {
     OpenConnection connection;
@@ -28,6 +30,14 @@ class ClientHandler extends Thread {
             try {
                 Message message = (Message) this.inputStream.readObject();
                 this.handleMessage(message);
+            } catch (EOFException | SocketException e) {
+                if (Objects.isNull(this.connection) || Objects.isNull(this.connection.username)) {
+                    System.out.print("Client socket closed");
+                } else {
+                    System.out.printf("Client socket closed with %s", this.connection.username);
+                }
+                closeSockets();
+                return;
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
@@ -37,16 +47,14 @@ class ClientHandler extends Thread {
     public void handleMessage(Message message) throws IOException {
         switch (message.type) {
             case LOGIN:
-                if (uniqueUsername(message.username)) {
-                    this.connection = new OpenConnection((String) message.username, this.outputStream);
+                if (isUsernameUnique(message.username)) {
+                    this.connection = new OpenConnection(message.username, this.outputStream);
                     this.clients.add(this.connection);
                     this.sendToAll(new Message(MessageType.LOGIN, this.connection.username, null, "*"));
                 } else {
                     new Message(MessageType.ERROR, message.username, "Pseudo déjà utilisé", message.username)
                             .send(this.outputStream);
-                    this.inputStream.close();
-                    this.outputStream.close();
-                    this.socket.close();
+                    closeSockets();
                 }
                 break;
 
@@ -60,10 +68,7 @@ class ClientHandler extends Thread {
                 break;
 
             case LOGOUT:
-                this.inputStream.close();
-                this.outputStream.close();
-                this.socket.close();
-                this.clients.remove(this.connection);
+                closeSockets();
                 this.sendToAll(new Message(MessageType.LOGOUT, this.connection.username, null, "*"));
                 break;
         }
@@ -77,7 +82,7 @@ class ClientHandler extends Thread {
         }
     }
 
-    public boolean uniqueUsername(String username) {
+    public boolean isUsernameUnique(String username) {
         OpenConnection connection;
         for (int i = 0; i < this.clients.size(); i++) {
             connection = this.clients.get(i);
@@ -85,7 +90,6 @@ class ClientHandler extends Thread {
                 return false;
             }
         }
-        System.out.println("on passe ici");
         return true;
     }
 
@@ -98,6 +102,17 @@ class ClientHandler extends Thread {
             }
         }
         return null;
+    }
+
+    public void closeSockets() {
+        this.clients.remove(this.connection);
+        try {
+            this.inputStream.close();
+            this.outputStream.close();
+            this.socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
 

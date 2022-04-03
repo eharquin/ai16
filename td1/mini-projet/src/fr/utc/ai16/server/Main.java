@@ -8,19 +8,14 @@ import java.util.ArrayList;
 
 public class Main {
     static ArrayList<OpenConnection> clients = new ArrayList<>();
-    static boolean exit = true;
 
-    public static void main(String[] args) throws IOException
-    {
-        while(true)
-        {
+    public static void main(String[] args) throws IOException {
+        while (true) {
             ServerSocket serverSocket = new ServerSocket(18060);
-            while (true)
-            {
+            while (true) {
                 Socket socket = null;
 
-                try
-                {
+                try {
                     socket = serverSocket.accept();
 
                     System.out.println("A new client is connected : " + socket);
@@ -33,8 +28,7 @@ public class Main {
                     t.start();
 
 
-                }
-                catch (Exception e){
+                } catch (Exception e) {
                     socket.close();
                     e.printStackTrace();
                 }
