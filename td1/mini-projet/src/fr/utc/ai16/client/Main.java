@@ -11,7 +11,7 @@ public class Main {
         MessageSender sender = new MessageSender(conn);
         sender.start();
 
-        MessageReceptor receptor = new MessageReceptor(conn,sender);
+        MessageReceptor receptor = new MessageReceptor(conn);
         receptor.start();
 
     }

@@ -4,17 +4,15 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.lang.Thread;
 import java.net.Socket;
+
 import fr.utc.ai16.Message;
 
 public class MessageReceptor extends Thread {
 
     private Socket client;
 
-    private MessageSender sender;
+    public MessageReceptor(Socket client) {
 
-    public MessageReceptor(Socket client,MessageSender sender) {
-
-        this.sender = sender;
         this.client = client;
     }
 
@@ -23,7 +21,7 @@ public class MessageReceptor extends Thread {
     public void run() {
         try {
             ObjectInputStream in = new ObjectInputStream(client.getInputStream());
-            Message m = null;
+            Message m;
             boolean exit = true;
 
             while (exit) {
@@ -34,21 +32,19 @@ public class MessageReceptor extends Thread {
                         break;
 
                     case TEXT:
-                        System.out.println("\r" + m.username + " a dit : " + m.content + "\n");
-                        break;
-
-                    case TEXT_PRIVATE:
-                        System.out.println("\r" + m.username + " vous a dit :" + m.content + "\n");
+                        if (m.destination.equals("*")) {
+                            System.out.printf("\r[%s] %s\n", m.username, m.content);
+                        } else {
+                            System.out.printf("\r[%s -> %s] %s\n", m.username, m.destination, m.content);
+                        }
                         break;
 
                     case LOGOUT:
                         System.out.println("\r" + m.username + " a quitté la conversation\n--------------------------");
                         break;
-                    case ERROR_CONNECTION:
-                        exit = false;
-                        System.out.println("\r" + m.username + " déja utilisé\n--------------------------");
-                        sender.setExit();
-                        break;
+                    case ERROR:
+                        System.out.println("\u001B[31m" + m.content + "\u001B[0m");
+                        System.exit(1);
                 }
 
             }
