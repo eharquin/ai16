@@ -47,12 +47,12 @@ class ClientHandler extends Thread {
     public void handleMessage(Message message) throws IOException {
         switch (message.type) {
             case LOGIN:
-                if (isUsernameUnique(message.username)) {
-                    this.connection = new OpenConnection(message.username, this.outputStream);
+                if (isUsernameUnique(message.source)) {
+                    this.connection = new OpenConnection(message.source, this.outputStream);
                     this.clients.add(this.connection);
-                    this.sendToAll(new Message(MessageType.LOGIN, this.connection.username, null, "*"));
+                    this.sendToAll(new Message(MessageType.LOGIN, this.connection.username, "*", null));
                 } else {
-                    new Message(MessageType.ERROR, message.username, "Pseudo déjà utilisé", message.username)
+                    new Message(MessageType.ERROR, message.source, message.source, "Pseudo déjà utilisé")
                             .send(this.outputStream);
                     closeSockets();
                 }
@@ -62,14 +62,14 @@ class ClientHandler extends Thread {
                 if (message.destination.equals("*")) {
                     this.sendToAll(message);
                 } else {
-                    message.send(this.getClient(message.username).outputStream);
+                    message.send(this.getClient(message.source).outputStream);
                     message.send(this.getClient(message.destination).outputStream);
                 }
                 break;
 
             case LOGOUT:
                 closeSockets();
-                this.sendToAll(new Message(MessageType.LOGOUT, this.connection.username, null, "*"));
+                this.sendToAll(new Message(MessageType.LOGOUT, this.connection.username, "*", null));
                 break;
         }
     }

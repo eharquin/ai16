@@ -36,7 +36,7 @@ public class MessageSender extends Thread {
                     switch (text.substring(1).split(" ")[0]) {
                         // Quit command
                         case "quit":
-                            m = new Message(MessageType.LOGOUT, pseudo, null, "*");
+                            m = new Message(MessageType.LOGOUT, pseudo, "*", null);
                             m.send(out);
                             this.client.close();
                             return;
@@ -47,7 +47,7 @@ public class MessageSender extends Thread {
                             if (matcher.matches()) {
                                 String destination = matcher.group(1);
                                 String contents = matcher.group(2);
-                                m = new Message(MessageType.TEXT, pseudo, contents, destination);
+                                m = new Message(MessageType.TEXT, pseudo, destination, contents);
                                 m.send(out);
                             }
                             break;
@@ -57,7 +57,7 @@ public class MessageSender extends Thread {
                     }
                 } else {
                     // If the message is not a command, send it as text
-                    m = new Message(MessageType.TEXT, pseudo, text, "*");
+                    m = new Message(MessageType.TEXT, pseudo, "*", text);
                     m.send(out);
                 }
             }
@@ -70,7 +70,7 @@ public class MessageSender extends Thread {
         System.out.println("Entrez votre pseudo : ");
         String pseudo = sc.nextLine();
 
-        Message loginMessage = new Message(MessageType.LOGIN, pseudo, null, "*");
+        Message loginMessage = new Message(MessageType.LOGIN, pseudo, "*", null);
         loginMessage.send(out);
         return pseudo;
     }
